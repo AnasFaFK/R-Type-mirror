@@ -1,4 +1,4 @@
-name: R-Type
+name: R-Type-mirror
 on:
   push:
     branches-ignore:
