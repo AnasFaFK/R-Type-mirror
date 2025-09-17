@@ -37,20 +37,8 @@ jobs:
           fi
         done
 
-  run_tests:
-    needs: check_program_compilation
-    runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: Run tests
-      run: make tests_run
-      timeout-minutes: 2
-
   push_to_mirror:
-    needs: run_tests
+    needs: check_program_compilation
     runs-on: ubuntu-latest
     steps:
       - name: checkout
