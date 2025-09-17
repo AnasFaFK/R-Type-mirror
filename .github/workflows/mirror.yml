@@ -1,4 +1,4 @@
-name: R-Type-mirror
+name: R-Type
 on:
   push:
     branches-ignore:
@@ -8,10 +8,8 @@ on:
       - "ga-ignore-*"
 
 env:
-  MIRROR_URL:
-    "git@github.com:EpitechPGE3-2025/G-CPP-500-MLH-5-1-rtype-2.git"
-  EXECUTABLES:
-    ["r-type_client", "r-type_server"]
+  MIRROR_URL: git@github.com:EpitechPGE3-2025/G-CPP-500-MLH-5-1-rtype-2.git
+  EXECUTABLES: "r-type_client r-type_server"
 
 jobs:
   check_program_compilation:
@@ -29,12 +27,16 @@ jobs:
       run: make clean
     - name: check_exec
       run: |
-            if [[ ! -f ${{ env.EXECUTABLES }} ]]; then
-              exit 84
-            fi
-            if [[ ! -x ${{ env.EXECUTABLES }} ]]; then
-              exit 84
-            fi
+        for exe in ${{ env.EXECUTABLES }}; do
+          if [[ ! -f "$exe" ]]; then
+            echo "Missing executable: $exe"
+            exit 84
+          fi
+          if [[ ! -x "$exe" ]]; then
+            echo "Not executable: $exe"
+            exit 84
+          fi
+        done
 
   push_to_mirror:
     needs: run_tests
@@ -47,7 +49,5 @@ jobs:
       - name: mirroring
         uses: pixta-dev/repository-mirroring-action@v1
         with:
-          target_repo_url:
-            ${{ env.MIRROR_URL }}
-          ssh_private_key:
-            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+          target_repo_url: ${{ env.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
