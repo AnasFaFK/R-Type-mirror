@@ -1,0 +1,75 @@
+name: R-Type
+on:
+  push:
+    branches-ignore:
+      - "ga-ignore-*"
+  pull_request:
+    branches-ignore:
+      - "ga-ignore-*"
+
+env:
+  MIRROR_URL:
+    "git@github.com:EpitechPGE3-2025/G-CPP-500-MLH-5-1-rtype-2.git"
+  EXECUTABLES:
+    ["r-type_client", "r-type_server"]
+
+jobs:
+  check_coding_style:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/epitech/coding-style-checker:latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: check_style
+      run: check.sh $(pwd) $(pwd)
+
+  check_program_compilation:
+    needs: check_coding_style
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: check_compil
+      run: make
+      timeout-minutes: 2
+    - name: check_clean
+      run: make clean
+    - name: check_exec
+      run: |
+            if [[ ! -f ${{ env.EXECUTABLES }} ]]; then
+              exit 84
+            fi
+            if [[ ! -x ${{ env.EXECUTABLES }} ]]; then
+              exit 84
+            fi
+
+  run_tests:
+    needs: check_program_compilation
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Run tests
+      run: make tests_run
+      timeout-minutes: 2
+
+  push_to_mirror:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: mirroring
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url:
+            ${{ env.MIRROR_URL }}
+          ssh_private_key:
+            ${{ secrets.GIT_SSH_PRIVATE_KEY }}
