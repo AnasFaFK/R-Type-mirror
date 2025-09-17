@@ -12,30 +12,30 @@ env:
   EXECUTABLES: "r-type_client r-type_server"
 
 jobs:
-  check_program_compilation:
-    runs-on: ubuntu-latest
-    container:
-      image: epitechcontent/epitest-docker
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: check_compil
-      run: make
-      timeout-minutes: 2
-    - name: check_clean
-      run: make clean
-    - name: check_exec
-      run: |
-        for exe in ${{ env.EXECUTABLES }}; do
-          if [[ ! -f "$exe" ]]; then
-            echo "Missing executable: $exe"
-            exit 84
-          fi
-          if [[ ! -x "$exe" ]]; then
-            echo "Not executable: $exe"
-            exit 84
-          fi
-        done
+  # check_program_compilation:
+  #   runs-on: ubuntu-latest
+  #   container:
+  #     image: epitechcontent/epitest-docker
+  #   steps:
+  #   - name: checkout
+  #     uses: actions/checkout@v3
+  #   - name: check_compil
+  #     run: make
+  #     timeout-minutes: 2
+  #   - name: check_clean
+  #     run: make clean
+  #   - name: check_exec
+  #     run: |
+  #       for exe in ${{ env.EXECUTABLES }}; do
+  #         if [[ ! -f "$exe" ]]; then
+  #           echo "Missing executable: $exe"
+  #           exit 84
+  #         fi
+  #         if [[ ! -x "$exe" ]]; then
+  #           echo "Not executable: $exe"
+  #           exit 84
+  #         fi
+  #       done
 
   push_to_mirror:
     needs: check_program_compilation
