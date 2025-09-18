@@ -1,0 +1,54 @@
+# name: C++ CI
+
+# on:
+#   push:
+#     branches: [ "main", "dev" ]
+#   pull_request:
+#     branches: [ "main", "dev" ]
+
+# jobs:
+#   build:
+#     runs-on: self-hosted
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
+
+#     - name: Cache APT packages
+#       uses: actions/cache@v3
+#       with:
+#         path: /var/cache/apt
+#         key: ${{ runner.os }}-apt-${{ hashFiles('**/CMakeLists.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-apt-
+
+#     - name: Install dependencies
+#       run: |
+#         sudo apt-get update
+#         sudo apt-get install -y g++ cmake libsfml-dev
+
+#     - name: Install Conan
+#       run: python3 -m pip install --upgrade pip
+#     - run: pip install conan
+
+#     - name: Conan install
+#       run: conan install . --build=missing
+
+#     - name: Cache CMake build
+#       uses: actions/cache@v3
+#       with:
+#         path: build
+#         key: ${{ runner.os }}-cmake-${{ hashFiles('**/*.cpp', '**/*.h', '**/CMakeLists.txt') }}
+#         restore-keys: |
+#           ${{ runner.os }}-cmake-
+
+#     - name: Configure CMake
+#       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+#     - name: Build
+#       run: cmake --build build --config Release -j 4
+
+#     - name: Run tests
+#       run: |
+#         cd build
+#         ctest --output-on-failure
